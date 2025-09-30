@@ -1,4 +1,10 @@
+out/
+cache/
+broadcast/
+lib/
+src_backup_*/
 .env
 .env.local
 .env.development
 .env.production
+*.save
