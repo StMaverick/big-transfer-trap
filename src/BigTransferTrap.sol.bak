@@ -1,0 +1,52 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "./IBigTransferResponse.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract BigTransferTrap is Ownable {
+    struct TransferData {
+        address from;
+        address to;
+        uint256 amount;
+        uint256 blockNumber;
+    }
+
+    event BigTransferDetected(
+        address indexed from,
+        address indexed to,
+        uint256 amount,
+        uint256 blockNumber
+    );
+
+    IBigTransferResponse public responseContract;
+    uint256 public constant BIG_TRANSFER_THRESHOLD = 1000 * 10**18;
+
+    constructor(address initialOwner) Ownable(initialOwner) {}
+
+    function setResponseContract(address _responseContract) external onlyOwner {
+        responseContract = IBigTransferResponse(_responseContract);
+    }
+
+    /// @notice Drosera calls this during block scans
+    function collect(
+        address from,
+        address to,
+        uint256 amount
+    ) external returns (TransferData memory) {
+        if (amount >= BIG_TRANSFER_THRESHOLD) {
+            emit BigTransferDetected(from, to, amount, block.number);
+
+            // Call into the response contract
+            responseContract.recordAlert(from, to, amount, block.number);
+        }
+
+        return TransferData({
+            from: from,
+            to: to,
+            amount: amount,
+            blockNumber: block.number
+     �});
+    }
+}
+

@@ -1,0 +1,20 @@
+ethereum_rpc = "https://rpc.ankr.com/eth_hoodi/83edbda9219d8a638451a3fe67fbb0908efd42ef75d6cddd7b81dca07b9cf00a"
+drosera_rpc = "https://relay.hoodi.drosera.io"
+eth_chain_id = 560048
+drosera_address = "0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D"
+
+[traps]
+
+[traps.bigtransfer]
+path = "out/BigTransferTrap.sol/BigTransferTrap.json"
+collect_function = "collect()"
+respond_function = "shouldRespond(bytes[])"
+response_contract = "0x5eda60b7Fa1ba597aeFF9C43bd1E99E33b531D5F"
+response_function = "recordAlert(address,address,uint256,uint256)"
+cooldown_period_blocks = 33
+min_number_of_operators = 1
+max_number_of_operators = 2
+block_sample_size = 10
+private_trap = true
+whitelist = ["0x9C7101926704cF31f34A125F8eE87327e18333ED"]
+address = "0x0bcFcFCd43A16fCAbA7Ce3b183ccA0f5B9d8684d"

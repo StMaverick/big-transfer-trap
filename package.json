@@ -1,0 +1,7 @@
+{
+  "name": "big-transfer-trap",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {},
+  "dependencies": {}
+}

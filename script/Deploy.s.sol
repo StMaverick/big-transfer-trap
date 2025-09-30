@@ -3,17 +3,15 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
-import "../src/BigTransferResponse.sol";
 import "../src/BigTransferTrap.sol";
 
 contract DeployScript is Script {
     function run() external {
-        vm.startBroadcast();
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
-        BigTransferResponse response = new BigTransferResponse();
-        console.log("BigTransferResponse deployed at:", address(response));
+        vm.startBroadcast(deployerPrivateKey);
 
-        BigTransferTrap trap = new BigTransferTrap(address(response));
+        BigTransferTrap trap = new BigTransferTrap();
         console.log("BigTransferTrap deployed at:", address(trap));
 
         vm.stopBroadcast();

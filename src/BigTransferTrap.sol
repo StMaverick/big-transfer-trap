@@ -1,66 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./IBigTransferResponse.sol";
-
 contract BigTransferTrap {
-    struct TransferData {
-        address from;
-        address to;
-        uint256 amount;
-        uint256 blockNumber;
-    }
-
-    event BigTransferDetected(address indexed from, address indexed to, uint256 amount);
-
-    IBigTransferResponse public responseContract;
+    address public constant RESPONSE_CONTRACT = 0x5eda60b7Fa1ba597aeFF9C43bd1E99E33b531D5F;
     uint256 public constant BIG_TRANSFER_THRESHOLD = 1000 * 10**18;
 
-    constructor(address _responseContract) {
-        responseContract = IBigTransferResponse(_responseContract);
+    function collect() external view returns (bytes memory) {
+        return abi.encode(BIG_TRANSFER_THRESHOLD, block.number);
     }
 
-    function collect(
-        address from,
-        address to,
-        uint256 amount
-    ) external view returns (TransferData memory) {
-        return TransferData({
-            from: from,
-            to: to,
-            amount: amount,
-            blockNumber: block.number
-        });
-    }
-
-    function shouldRespond(TransferData[] calldata transfers) public pure returns (bool) {
-        if (transfers.length == 0) return false;
-        for (uint i = 0; i < transfers.length; i++) {
-            if (transfers[i].amount >= BIG_TRANSFER_THRESHOLD) {
-                return true;
-            }
+    function shouldRespond(bytes[] calldata data) external pure returns (bool, bytes memory) {
+        if (data.length == 0) {
+            return (false, bytes(""));
         }
-        return false;
-    }
-
-    function isShouldRespond(TransferData[] calldata transfers) external pure returns (bool) {
-        return shouldRespond(transfers);
-    }
-
-    function respond(TransferData[] calldata transfers) external {
-        require(transfers.length > 0, "No transfers");
-
-        for (uint i = 0; i < transfers.length; i++) {
-            if (transfers[i].amount >= BIG_TRANSFER_THRESHOLD) {
-                emit BigTransferDetected(transfers[i].from, transfers[i].to, transfers[i].amount);
-
-                responseContract.recordBigTransfer(
-                    transfers[i].from,
-                    transfers[i].to,
-                    transfers[i].amount
-                );
-                break;
-            }
+        
+        (uint256 threshold,) = abi.decode(data[0], (uint256, uint256));
+        
+        if (threshold > 0) {
+            return (true, data[0]);
         }
+        
+        return (false, bytes(""));
     }
 }
