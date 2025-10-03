@@ -7,8 +7,6 @@ drosera_address = "0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D"
 
 [traps.bigtransfer]
 path = "out/BigTransferTrap.sol/BigTransferTrap.json"
-collect_function = "collect()"
-respond_function = "shouldRespond(bytes[])"
 response_contract = "0x5eda60b7Fa1ba597aeFF9C43bd1E99E33b531D5F"
 response_function = "recordAlert(address,address,uint256,uint256)"
 cooldown_period_blocks = 33
